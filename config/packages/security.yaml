@@ -1,0 +1,71 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # ── Endpoints Passkey publics (sans session, sans JWT requis) ──
+        api_auth:
+            pattern: ^/api/auth
+            stateless: true
+            security: false
+
+        # ── Endpoint création de session depuis JWT ─────────────────
+        # CORRECTION : stateless: false pour que la session Symfony
+        # puisse être écrite (cookie de session envoyé au navigateur)
+        session_from_jwt:
+            pattern: ^/auth/session-from-jwt
+            stateless: false          # ← DOIT être false pour écrire la session
+            security: false           # pas d'authentification requise en entrée
+            context: main_context     # ← partage le contexte de session avec "main"
+
+        # ── Endpoint JWT-for-session ────────────────────────────────
+        jwt_for_session:
+            pattern: ^/auth/jwt-for-session
+            stateless: false
+            provider: app_user_provider
+            context: main_context
+
+        # ── API protégée par JWT ────────────────────────────────────
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
+
+        # ── Application web principale (sessions Symfony) ───────────
+        main:
+            lazy: true
+            provider: app_user_provider
+            context: main_context
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_home
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: app_home
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+
+    access_control:
+        - { path: ^/api/auth,              roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh,     roles: PUBLIC_ACCESS }
+        - { path: ^/auth/session-from-jwt, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/jwt-for-session,  roles: ROLE_USER }
+        - { path: ^/api,                   roles: ROLE_USER }
+        - { path: ^/admin,                 roles: ROLE_ADMIN }
+        - { path: ^/login,                 roles: PUBLIC_ACCESS }
+        - { path: ^/register,              roles: PUBLIC_ACCESS }
+        - { path: ^/,                      roles: PUBLIC_ACCESS }

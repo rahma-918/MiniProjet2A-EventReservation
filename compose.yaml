@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: app_db
+    environment:
+      POSTGRES_DB: event_db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "event_db", "-U", "user"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+  php:
+    build: .
+    container_name: app_php
+    volumes:
+      - .:/var/www
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=postgresql://user:password@db:5432/event_db?serverVersion=15&charset=utf8
+      - MAILER_DSN=smtp://rahmachkel@gmail.com:vpcguuqbnsfdtdjb@smtp.gmail.com:587?encryption=tls&auth_mode=login
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: app_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - app-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: app_mailhog
+    ports:
+      - "1025:1025"   # port SMTP
+      - "8025:8025"   # interface web
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  database_data:

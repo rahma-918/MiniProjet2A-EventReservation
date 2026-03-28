@@ -1,0 +1,291 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.title }} — Eventix{% endblock %}
+
+{% block body %}
+
+<section style="background:linear-gradient(135deg,#1a1a2e,#3b28cc);padding:4rem 0 3rem;color:#fff;">
+    <div class="container">
+        <a href="{{ path('app_events') }}" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> Retour aux événements
+        </a>
+        <h1 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem;line-height:1.2;">{{ event.title }}</h1>
+        <div style="display:flex;flex-wrap:wrap;gap:1.5rem;">
+            <span style="display:flex;align-items:center;gap:0.5rem;font-size:0.95rem;opacity:0.9;">
+                <i class="bi bi-calendar3"></i> {{ event.date|date('d F Y à H:i') }}
+            </span>
+            <span style="display:flex;align-items:center;gap:0.5rem;font-size:0.95rem;opacity:0.9;">
+                <i class="bi bi-geo-alt"></i> {{ event.location }}
+            </span>
+            <span style="display:flex;align-items:center;gap:0.5rem;font-size:0.95rem;opacity:0.9;">
+                <i class="bi bi-ticket"></i>
+                {% set avail = event.availableSeats %}
+                {{ avail <= 0 ? 'Complet' : avail ~ ' places disponibles' }}
+            </span>
+        </div>
+    </div>
+</section>
+
+<section style="padding:4rem 0;">
+    <div class="container">
+        <div class="row g-5">
+
+            {# ── Détails événement (inchangé) ─────────────────────── #}
+            <div class="col-lg-7">
+                {% if event.image %}
+                <img src="{{ event.image }}" alt="{{ event.title }}"
+                     style="width:100%;height:350px;object-fit:cover;border-radius:16px;margin-bottom:2rem;box-shadow:0 8px 32px rgba(59,40,204,0.12);">
+                {% endif %}
+
+                <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:1rem;">À propos de cet événement</h2>
+                <div style="color:#4b5563;line-height:1.8;font-size:0.97rem;">
+                    {{ event.description|nl2br }}
+                </div>
+
+                <div style="background:#f0f0f8;border-radius:14px;padding:1.5rem;margin-top:2rem;">
+                    <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:#1a1a2e;">Informations pratiques</h3>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(59,40,204,0.1);">
+                                    <i class="bi bi-calendar3" style="color:#3b28cc;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Date</div>
+                                    <div style="font-size:0.9rem;font-weight:600;">{{ event.date|date('d M Y') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(59,40,204,0.1);">
+                                    <i class="bi bi-clock" style="color:#3b28cc;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Heure</div>
+                                    <div style="font-size:0.9rem;font-weight:600;">{{ event.date|date('H:i') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(59,40,204,0.1);">
+                                    <i class="bi bi-geo-alt" style="color:#3b28cc;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Lieu</div>
+                                    <div style="font-size:0.9rem;font-weight:600;">{{ event.location }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <div style="width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(59,40,204,0.1);">
+                                    <i class="bi bi-people" style="color:#3b28cc;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Capacité</div>
+                                    <div style="font-size:0.9rem;font-weight:600;">{{ event.seats }} places</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Colonne droite : réservation ─────────────────────── #}
+            <div class="col-lg-5">
+                <div style="background:#fff;border-radius:16px;padding:2rem;box-shadow:0 8px 32px rgba(59,40,204,0.1);border:1px solid rgba(59,40,204,0.08);position:sticky;top:90px;">
+
+                    {% set avail = event.availableSeats %}
+
+                    {# ── CAS 1 : événement complet ──────────────────── #}
+                    {% if avail <= 0 %}
+
+                        <div style="text-align:center;padding:2rem 0;">
+                            <div style="width:80px;height:80px;background:#ffebee;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+                                <i class="bi bi-x-circle" style="font-size:2rem;color:#c62828;"></i>
+                            </div>
+                            <h4 style="font-weight:700;color:#1a1a2e;margin-bottom:0.5rem;">Événement complet</h4>
+                            <p style="color:#6b7280;font-size:0.9rem;">Toutes les places ont été réservées.</p>
+                            <a href="{{ path('app_events') }}" class="btn-outline-eventix" style="margin-top:1rem;display:inline-block;">
+                                Voir d'autres événements
+                            </a>
+                        </div>
+
+                    {# ── CAS 2 : connecté via session Symfony ───────── #}
+                    {% elseif app.user %}
+
+                        {# L'utilisateur est connecté via formulaire email/mot de passe.
+                           Symfony a une session active, on affiche directement le formulaire. #}
+                        {% set pct = ((avail / event.seats) * 100)|round %}
+                        <div style="margin-bottom:1.5rem;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                                <span style="font-size:0.85rem;color:#6b7280;font-weight:500;">Places disponibles</span>
+                                <span style="font-size:0.85rem;font-weight:700;color:#3b28cc;">{{ avail }}/{{ event.seats }}</span>
+                            </div>
+                            <div style="background:#f0f0f8;border-radius:20px;height:6px;overflow:hidden;">
+                                <div style="background:linear-gradient(90deg,#3b28cc,#6c5ce7);height:100%;width:{{ pct }}%;border-radius:20px;"></div>
+                            </div>
+                        </div>
+                        <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;color:#1a1a2e;">
+                            <i class="bi bi-ticket-perforated me-2" style="color:#3b28cc;"></i>Réserver ma place
+                        </h3>
+                        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+                        <div class="mb-3">
+                            <label class="form-label">Nom complet <span style="color:red">*</span></label>
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email <span style="color:red">*</span></label>
+                            {{ form_widget(form.email) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Téléphone</label>
+                            {{ form_widget(form.phone) }}
+                            {{ form_errors(form.phone) }}
+                        </div>
+                        <button type="submit" class="btn-primary-eventix" style="width:100%;border:none;text-align:center;">
+                            <i class="bi bi-check2-circle me-2"></i>Confirmer ma réservation
+                        </button>
+                        {{ form_end(form) }}
+                        <p style="font-size:0.8rem;color:#9ca3af;text-align:center;margin-top:1rem;">
+                            <i class="bi bi-shield-lock me-1"></i>Vos données sont protégées et sécurisées.
+                        </p>
+
+                    {# ── CAS 3 : pas de session Symfony ─────────────── #}
+                    {# Deux sous-cas gérés par le JS :                    #}
+                    {#   A) JWT valide dans localStorage (Passkey)         #}
+                    {#      → afficher le formulaire                       #}
+                    {#   B) Pas de JWT → utilisateur non connecté          #}
+                    {#      → afficher le bloc "Connexion requise"         #}
+                    {% else %}
+
+                        {# Bloc "Connexion requise" — visible par défaut,
+                           masqué par le JS si un JWT valide est trouvé. #}
+                        <div id="block-login-required">
+                            <div style="text-align:center;padding:1.5rem 0;">
+                                <div style="width:72px;height:72px;background:rgba(59,40,204,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;">
+                                    <i class="bi bi-lock" style="font-size:1.8rem;color:#3b28cc;"></i>
+                                </div>
+                                <h4 style="font-weight:700;color:#1a1a2e;margin-bottom:0.5rem;font-size:1.1rem;">
+                                    Connexion requise
+                                </h4>
+                                <p style="color:#6b7280;font-size:0.9rem;margin-bottom:1.5rem;line-height:1.6;">
+                                    Vous devez être connecté à votre compte pour réserver une place à cet événement.
+                                </p>
+                                <a href="{{ path('app_login') }}"
+                                   class="btn-primary-eventix"
+                                   style="display:inline-block;width:100%;text-align:center;margin-bottom:0.75rem;">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                                </a>
+                                <a href="{{ path('app_register') }}"
+                                   class="btn-outline-eventix"
+                                   style="display:inline-block;width:100%;text-align:center;">
+                                    <i class="bi bi-person-plus me-2"></i>Créer un compte
+                                </a>
+                                <p style="font-size:0.8rem;color:#9ca3af;margin-top:1.2rem;">
+                                    <i class="bi bi-shield-lock me-1"></i>Vos données sont protégées et sécurisées.
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Formulaire — masqué par défaut,
+                           affiché par le JS si JWT valide (connexion Passkey). #}
+                        <div id="block-form-jwt" style="display:none;">
+                            {% set pct = ((avail / event.seats) * 100)|round %}
+                            <div style="margin-bottom:1.5rem;">
+                                <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                                    <span style="font-size:0.85rem;color:#6b7280;font-weight:500;">Places disponibles</span>
+                                    <span style="font-size:0.85rem;font-weight:700;color:#3b28cc;">{{ avail }}/{{ event.seats }}</span>
+                                </div>
+                                <div style="background:#f0f0f8;border-radius:20px;height:6px;overflow:hidden;">
+                                    <div style="background:linear-gradient(90deg,#3b28cc,#6c5ce7);height:100%;width:{{ pct }}%;border-radius:20px;"></div>
+                                </div>
+                            </div>
+                            <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;color:#1a1a2e;">
+                                <i class="bi bi-ticket-perforated me-2" style="color:#3b28cc;"></i>Réserver ma place
+                            </h3>
+                            {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+                            <div class="mb-3">
+                                <label class="form-label">Nom complet <span style="color:red">*</span></label>
+                                {{ form_widget(form.name) }}
+                                {{ form_errors(form.name) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email <span style="color:red">*</span></label>
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Téléphone</label>
+                                {{ form_widget(form.phone) }}
+                                {{ form_errors(form.phone) }}
+                            </div>
+                            <button type="submit" class="btn-primary-eventix" style="width:100%;border:none;text-align:center;">
+                                <i class="bi bi-check2-circle me-2"></i>Confirmer ma réservation
+                            </button>
+                            {{ form_end(form) }}
+                            <p style="font-size:0.8rem;color:#9ca3af;text-align:center;margin-top:1rem;">
+                                <i class="bi bi-shield-lock me-1"></i>Vos données sont protégées et sécurisées.
+                            </p>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+{# Ce bloc ne s'exécute que si Symfony n'a PAS de session (app.user est null).  #}
+{# On vérifie le JWT dans localStorage pour les utilisateurs connectés via Passkey. #}
+{% if not app.user %}
+(function () {
+    var loginBlock = document.getElementById('block-login-required');
+    var formBlock  = document.getElementById('block-form-jwt');
+    if (!loginBlock || !formBlock) return;
+
+    var token = localStorage.getItem('jwt_token');
+
+    // Pas de token → non connecté → "Connexion requise" reste visible
+    if (!token) return;
+
+    // Décoder le payload JWT (base64url) et vérifier l'expiration
+    try {
+        var parts = token.split('.');
+        if (parts.length !== 3) throw new Error();
+
+        var b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) { b64 += '='; }
+        var payload = JSON.parse(atob(b64));
+
+        // Token expiré → nettoyer localStorage et laisser "Connexion requise"
+        if (payload.exp && Math.floor(Date.now() / 1000) >= payload.exp) {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('display_name');
+            return;
+        }
+
+        // JWT valide → connecté via Passkey → afficher le formulaire
+        loginBlock.style.display = 'none';
+        formBlock.style.display  = 'block';
+
+    } catch (e) {
+        // Token illisible → "Connexion requise" reste visible
+        localStorage.removeItem('jwt_token');
+    }
+})();
+{% endif %}
+</script>
+{% endblock %}

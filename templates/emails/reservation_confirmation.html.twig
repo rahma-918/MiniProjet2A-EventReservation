@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de réservation</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f8fc; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #3b28cc, #00b4d8); padding: 2rem; text-align: center; }
+        .header h1 { color: #fff; margin: 0; font-size: 1.6rem; }
+        .header p { color: rgba(255,255,255,0.85); margin: 0.5rem 0 0; font-size: 0.95rem; }
+        .body { padding: 2rem; }
+        .body p { color: #4b5563; line-height: 1.7; }
+        .details { background: #f0f0f8; border-radius: 10px; padding: 1.25rem; margin: 1.5rem 0; }
+        .details h3 { margin: 0 0 1rem; color: #1a1a2e; font-size: 1rem; }
+        .detail-row { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; font-size: 0.92rem; color: #374151; }
+        .detail-label { font-weight: 600; min-width: 80px; color: #3b28cc; }
+        .badge { display: inline-block; background: #3b28cc; color: #fff; padding: 0.5rem 1.25rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem; margin-top: 1rem; }
+        .footer { background: #f9f9ff; padding: 1.25rem 2rem; text-align: center; border-top: 1px solid #e5e7eb; }
+        .footer p { color: #9ca3af; font-size: 0.82rem; margin: 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>🎉 Réservation confirmée !</h1>
+        <p>Merci pour votre réservation sur Eventix</p>
+    </div>
+
+    <div class="body">
+        <p>Bonjour <strong>{{ reservation.name }}</strong>,</p>
+        <p>
+            Votre réservation pour l'événement <strong>{{ event.title }}</strong> a bien été enregistrée.
+            Nous avons hâte de vous accueillir !
+        </p>
+
+        <div class="details">
+            <h3>📋 Détails de votre réservation</h3>
+            <div class="detail-row">
+                <span class="detail-label">Événement</span>
+                <span>{{ event.title }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span>{{ event.date|date('d/m/Y à H:i') }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Lieu</span>
+                <span>{{ event.location }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Nom</span>
+                <span>{{ reservation.name }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span>{{ reservation.email }}</span>
+            </div>
+            {% if reservation.phone %}
+            <div class="detail-row">
+                <span class="detail-label">Téléphone</span>
+                <span>{{ reservation.phone }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+        <span class="badge">✓ Place réservée</span>
+    </div>
+
+    <div class="footer">
+        <p>Ce message est automatique, merci de ne pas y répondre directement.</p>
+        <p style="margin-top:0.4rem;">© 2026 Eventix — ISSAT Sousse FIA3-GL</p>
+    </div>
+
+</div>
+</body>
+</html>

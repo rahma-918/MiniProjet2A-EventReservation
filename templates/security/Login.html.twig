@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Eventix{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="min-height:100vh;background:linear-gradient(135deg,#1a1a2e 0%,#3b28cc 60%,#00b4d8 100%);display:flex;align-items:center;justify-content:center;padding:2rem;">
+    <div style="width:100%;max-width:420px;">
+
+        <div style="text-align:center;margin-bottom:2rem;">
+            <a href="{{ path('app_home') }}" style="display:inline-block;background:#fff;color:#3b28cc;font-weight:800;font-size:1.3rem;padding:0.5rem 1.3rem;border-radius:10px;text-decoration:none;margin-bottom:1.5rem;">
+                Eventix
+            </a>
+            <h1 style="color:#fff;font-size:1.8rem;font-weight:800;margin-bottom:0.4rem;">Bienvenue !</h1>
+            <p style="color:rgba(255,255,255,0.7);font-size:0.95rem;">Connectez-vous à votre compte</p>
+        </div>
+
+        <div style="background:#fff;border-radius:20px;padding:2.5rem;box-shadow:0 24px 64px rgba(0,0,0,0.2);">
+
+            {% if error %}
+            <div class="alert alert-danger d-flex align-items-center gap-2" style="border-radius:10px;border:none;font-size:0.9rem;margin-bottom:1.5rem;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+            {% endif %}
+
+            <div style="background:linear-gradient(135deg,#F5F3FF 0%,#EEF0FF 100%);border:1px solid #C7D2FE;border-radius:12px;padding:1.2rem;margin-bottom:1.5rem;">
+                <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#3b28cc;margin-bottom:0.5rem;">
+                    🔑 Connexion rapide
+                </div>
+                <div style="font-size:0.85rem;color:#4b5563;margin-bottom:0.75rem;">
+                    Utilisez votre <strong>clé de sécurité physique</strong> pour vous connecter instantanément.
+                </div>
+                <button type="button" id="passkey-login-btn"
+                        style="width:100%;background:#3b28cc;color:#fff;border:none;border-radius:8px;padding:0.75rem 1rem;font-weight:700;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:background 0.2s;"
+                        onmouseover="this.style.background='#2d1fa3'"
+                        onmouseout="this.style.background='#3b28cc'">
+                    <i class="bi bi-usb-symbol" style="font-size:1.1rem;"></i>
+                    <span id="passkey-btn-text">Se connecter avec une clé de sécurité</span>
+                    <span class="spinner-passkey" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;"></span>
+                </button>
+                <div id="passkey-error" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:0.5rem 0.75rem;font-size:0.82rem;color:#991B1B;margin-top:0.75rem;"></div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+                <hr style="flex:1;border-color:#e5e7eb;">
+                <span style="font-size:0.82rem;color:#9ca3af;white-space:nowrap;">ou avec mot de passe</span>
+                <hr style="flex:1;border-color:#e5e7eb;">
+            </div>
+
+            <form method="post" action="{{ path('app_login') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="mb-3">
+                    <label class="form-label">Adresse email</label>
+                    <div style="position:relative;">
+                        <i class="bi bi-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6b7280;"></i>
+                        <input type="email" name="_username" value="{{ last_username }}" class="form-control"
+                               style="padding-left:2.5rem;" placeholder="votre@email.com" autocomplete="email" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Mot de passe</label>
+                    <div style="position:relative;">
+                        <i class="bi bi-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#6b7280;"></i>
+                        <input type="password" name="_password" class="form-control"
+                               style="padding-left:2.5rem;" placeholder="••••••••" autocomplete="current-password" required>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;margin-bottom:1.5rem;">
+                    <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;cursor:pointer;color:#4b5563;">
+                        <input type="checkbox" name="_remember_me" style="accent-color:#3b28cc;width:16px;height:16px;">
+                        Se souvenir de moi
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary-eventix" style="width:100%;border:none;text-align:center;font-size:1rem;">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                </button>
+            </form>
+
+            <div style="text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #f0f0f8;">
+                <span style="color:#6b7280;font-size:0.9rem;">Pas encore de compte ?</span>
+                <a href="{{ path('app_register') }}" style="color:#3b28cc;font-weight:700;text-decoration:none;margin-left:0.4rem;font-size:0.9rem;">S'inscrire →</a>
+            </div>
+            <div style="margin-top:0.75rem;text-align:center;">
+                <a href="{{ path('app_home') }}" style="color:#9ca3af;font-size:0.85rem;text-decoration:none;">
+                    <i class="bi bi-arrow-left me-1"></i>Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btn     = document.getElementById('passkey-login-btn');
+    var btnText = document.getElementById('passkey-btn-text');
+    var spinner = document.querySelector('.spinner-passkey');
+    var errBox  = document.getElementById('passkey-error');
+
+    function setLoading(on) {
+        btn.disabled          = on;
+        spinner.style.display = on ? 'inline-block' : 'none';
+        btnText.style.opacity = on ? '0.7' : '1';
+    }
+
+    if (btn) {
+        btn.addEventListener('click', async function () {
+            if (!window.PublicKeyCredential) {
+                errBox.style.display = 'block';
+                errBox.textContent   = 'Votre navigateur ne supporte pas WebAuthn.';
+                return;
+            }
+            errBox.style.display = 'none';
+            setLoading(true);
+            try {
+                await loginWithPasskey();
+                errBox.style.display = 'block';
+                errBox.textContent   = 'Connexion incomplète. Veuillez réessayer.';
+                setLoading(false);
+            } catch (err) {
+                errBox.style.display = 'block';
+                errBox.textContent   = 'Échec : ' + (err.message || 'Clé non reconnue.');
+                setLoading(false);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

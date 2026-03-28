@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Eventix{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary:#3b28cc;--primary-dark:#2d1fa3;--accent:#00b4d8;
+            --text-dark:#1a1a2e;--text-muted:#6b7280;
+            --card-shadow:0 4px 24px rgba(59,40,204,0.10);
+            --card-shadow-hover:0 8px 32px rgba(59,40,204,0.18);
+            --radius:14px;--radius-sm:8px;
+        }
+        *{box-sizing:border-box;}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8f8fc;color:var(--text-dark);min-height:100vh;}
+        .navbar-eventix{background:#fff;box-shadow:0 2px 16px rgba(59,40,204,0.08);padding:0.75rem 0;position:sticky;top:0;z-index:1030;}
+        .navbar-brand-eventix{background:var(--primary);color:#fff !important;font-weight:800;font-size:1.15rem;padding:0.45rem 1rem;border-radius:var(--radius-sm);text-decoration:none;transition:background 0.2s;}
+        .navbar-brand-eventix:hover{background:var(--primary-dark);}
+        .nav-link-eventix{color:var(--text-dark) !important;font-weight:500;font-size:0.95rem;padding:0.5rem 0.9rem !important;border-radius:6px;transition:all 0.2s;text-decoration:none;}
+        .nav-link-eventix:hover,.nav-link-eventix.active{color:var(--primary) !important;background:rgba(59,40,204,0.06);}
+        .btn-buy{background:var(--primary);color:#fff !important;font-weight:700;padding:0.5rem 1.4rem;border-radius:var(--radius-sm);border:none;transition:all 0.2s;text-decoration:none;font-size:0.95rem;display:inline-block;cursor:pointer;}
+        .btn-buy:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,40,204,0.25);}
+        .btn-primary-eventix{background:var(--primary);color:#fff;border:2px solid var(--primary);font-weight:700;padding:0.65rem 1.8rem;border-radius:var(--radius-sm);transition:all 0.2s;text-decoration:none;display:inline-block;cursor:pointer;font-size:0.95rem;}
+        .btn-primary-eventix:hover{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,40,204,0.3);}
+        .btn-outline-eventix{background:transparent;color:var(--primary);border:2px solid var(--primary);font-weight:700;padding:0.65rem 1.8rem;border-radius:var(--radius-sm);transition:all 0.2s;text-decoration:none;display:inline-block;cursor:pointer;font-size:0.95rem;}
+        .btn-outline-eventix:hover{background:var(--primary);color:#fff;transform:translateY(-2px);}
+        .event-card{background:#fff;border-radius:var(--radius);box-shadow:var(--card-shadow);overflow:hidden;transition:all 0.3s ease;border:1px solid rgba(59,40,204,0.06);height:100%;}
+        .event-card:hover{transform:translateY(-6px);box-shadow:var(--card-shadow-hover);}
+        .event-card-img{width:100%;height:200px;object-fit:cover;}
+        .event-card-img-placeholder{width:100%;height:200px;background:linear-gradient(135deg,#3b28cc 0%,#00b4d8 100%);display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,255,255,0.7);}
+        .event-card-body{padding:1.4rem;}
+        .event-badge{background:rgba(59,40,204,0.1);color:var(--primary);font-size:0.78rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:20px;display:inline-block;margin-bottom:0.75rem;}
+        .event-title{font-size:1.1rem;font-weight:700;color:var(--text-dark);margin-bottom:0.5rem;line-height:1.3;}
+        .event-meta{font-size:0.85rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;margin-bottom:0.4rem;}
+        .event-meta i{color:var(--primary);}
+        .seats-badge{background:#e8f5e9;color:#2e7d32;font-size:0.8rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;}
+        .seats-badge.low{background:#fff3e0;color:#e65100;}
+        .seats-badge.full{background:#ffebee;color:#c62828;}
+        .flash-container{position:fixed;top:80px;right:20px;z-index:9999;min-width:320px;}
+        .flash-alert{border-radius:var(--radius-sm);border:none;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.12);animation:slideIn 0.3s ease;}
+        @keyframes slideIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+        .form-control,.form-select{border:1.5px solid #e5e7eb;border-radius:var(--radius-sm);padding:0.7rem 1rem;font-size:0.95rem;transition:all 0.2s;font-family:'Plus Jakarta Sans',sans-serif;}
+        .form-control:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,40,204,0.12);}
+        .form-label{font-weight:600;font-size:0.9rem;color:var(--text-dark);margin-bottom:0.4rem;}
+        .countdown-box{background:#fff;border:1.5px solid rgba(59,40,204,0.15);border-radius:var(--radius-sm);padding:1rem 1.5rem;text-align:center;min-width:90px;}
+        .countdown-num{font-size:2rem;font-weight:800;color:var(--primary);line-height:1;}
+        .countdown-label{font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:0.25rem;}
+        .admin-sidebar{background:var(--text-dark);min-height:100vh;padding:1.5rem 0;position:fixed;width:250px;top:0;left:0;z-index:100;}
+        .admin-content{margin-left:250px;padding:2rem;}
+        .admin-nav-link{color:rgba(255,255,255,0.7);padding:0.75rem 1.5rem;display:flex;align-items:center;gap:0.75rem;text-decoration:none;font-size:0.9rem;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;}
+        .admin-nav-link:hover,.admin-nav-link.active{background:rgba(255,255,255,0.08);color:#fff;border-left-color:var(--primary);}
+        .admin-stat-card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--card-shadow);border-left:4px solid var(--primary);}
+        .footer-eventix{background:var(--text-dark);color:rgba(255,255,255,0.7);padding:3rem 0 1.5rem;margin-top:5rem;}
+        .feature-pill{background:#fff;border-radius:50px;padding:0.6rem 1.2rem;font-size:0.9rem;font-weight:600;color:var(--text-dark);box-shadow:0 4px 16px rgba(0,0,0,0.1);display:flex;align-items:center;gap:0.6rem;}
+        .feature-pill i{color:var(--primary);}
+        @media(max-width:768px){.admin-sidebar{display:none;}.admin-content{margin-left:0;}}
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+<div class="flash-container">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert flash-alert alert-{{ type == 'success' ? 'success' : (type == 'error' ? 'danger' : type) }} alert-dismissible fade show" role="alert">
+                <i class="bi bi-{{ type == 'success' ? 'check-circle' : 'exclamation-triangle' }}-fill me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+{% block navbar %}
+<nav class="navbar-eventix">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a href="{{ path('app_home') }}" class="navbar-brand-eventix">Eventix</a>
+
+        <div class="d-none d-lg-flex align-items-center gap-1">
+            <a href="{{ path('app_home') }}" class="nav-link-eventix {{ app.request.get('_route') == 'app_home' ? 'active' : '' }}">Accueil</a>
+            <a href="{{ path('app_events') }}" class="nav-link-eventix {{ app.request.get('_route') starts with 'app_event' ? 'active' : '' }}">Événements</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_admin_dashboard') }}" class="nav-link-eventix">Admin</a>
+            {% endif %}
+        </div>
+
+        {# id="nav-user-area" est ciblé par le JS ci-dessous #}
+        <div class="d-none d-lg-flex align-items-center gap-3" id="nav-user-area">
+            {% if app.user %}
+                {# Connexion formulaire → session Symfony → Twig connaît l'user #}
+                <span style="color:#6b7280;font-size:0.9rem;font-weight:500;">
+                    <i class="bi bi-person-circle me-1"></i>{{ app.user.username }}
+                </span>
+                <button onclick="logoutJwt()" class="nav-link-eventix" style="border:none;background:none;cursor:pointer;">
+                    Déconnexion
+                </button>
+            {% else %}
+                {# Connexion Passkey → JWT dans localStorage → JS mettra à jour ce bloc #}
+                <a href="{{ path('app_login') }}" class="nav-link-eventix" id="nav-link-login">Connexion</a>
+                <a href="{{ path('app_register') }}" class="btn-buy" id="nav-link-register">S'inscrire</a>
+            {% endif %}
+        </div>
+
+        <button class="d-lg-none border-0 bg-transparent" id="mobileToggle">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+    </div>
+
+    <div class="d-none" id="mobileMenu" style="background:#fff;padding:1rem;border-top:1px solid #f0f0f8;">
+        <div class="container d-flex flex-column gap-2">
+            <a href="{{ path('app_home') }}" class="nav-link-eventix">Accueil</a>
+            <a href="{{ path('app_events') }}" class="nav-link-eventix">Événements</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_admin_dashboard') }}" class="nav-link-eventix">Admin</a>
+            {% endif %}
+            {% if app.user %}
+                <button onclick="logoutJwt()" class="nav-link-eventix" style="border:none;background:none;cursor:pointer;text-align:left;">
+                    Déconnexion
+                </button>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="nav-link-eventix" id="mobile-link-login">Connexion</a>
+                <a href="{{ path('app_register') }}" class="nav-link-eventix" id="mobile-link-register">S'inscrire</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}{% endblock %}
+
+<footer class="footer-eventix">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div style="color:#fff;font-weight:800;font-size:1.3rem;margin-bottom:0.5rem;">Eventix</div>
+                <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;">La plateforme de référence pour vos réservations d'événements.</p>
+            </div>
+            <div class="col-lg-2 col-6">
+                <div style="color:#fff;font-weight:600;margin-bottom:1rem;font-size:0.9rem;">Navigation</div>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ path('app_home') }}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;">Accueil</a>
+                    <a href="{{ path('app_events') }}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;">Événements</a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-6">
+                <div style="color:#fff;font-weight:600;margin-bottom:1rem;font-size:0.9rem;">Compte</div>
+                <div class="d-flex flex-column gap-2">
+                    {% if app.user %}
+                        <button onclick="logoutJwt()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:0.88rem;cursor:pointer;text-align:left;padding:0;">
+                            Déconnexion
+                        </button>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;" id="footer-link-login">Connexion</a>
+                        <a href="{{ path('app_register') }}" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;" id="footer-link-register">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,0.1);margin:2rem 0 1rem;">
+        <div style="text-align:center;color:rgba(255,255,255,0.4);font-size:0.85rem;">© 2026 Eventix — Projet ISSAT Sousse FIA3-GL</div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{# auth.js chargé UNE SEULE FOIS ici — les templates enfants ne doivent PAS le recharger #}
+<script src="{{ asset('js/auth.js') }}"></script>
+
+<script>
+// ── Flash messages ────────────────────────────────────────────────
+document.querySelectorAll('.flash-alert').forEach(function(el) {
+    setTimeout(function() {
+        el.classList.remove('show');
+        setTimeout(function() { el.remove(); }, 300);
+    }, 5000);
+});
+
+// ── Menu mobile ───────────────────────────────────────────────────
+var mt = document.getElementById('mobileToggle');
+var mm = document.getElementById('mobileMenu');
+if (mt) mt.addEventListener('click', function() { mm.classList.toggle('d-none'); });
+
+// ── Déconnexion sécurisée ─────────────────────────────────────────
+function logoutJwt() {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('display_name');
+    window.location.href = '{{ path("app_logout") }}';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// LECTURE DU JWT SANS APPEL RÉSEAU
+//
+// Le payload d'un JWT est en base64url — lisible directement en JS,
+// aucune requête serveur nécessaire, aucun risque de 401.
+//
+// Structure JWT :  header.payload.signature
+// Le payload contient : username, email, exp, iat, roles...
+// LexikJWTAuthenticationBundle stocke l'email dans "username".
+// ─────────────────────────────────────────────────────────────────
+function parseJwtPayload(token) {
+    try {
+        // Le payload est la 2e partie, encodée en base64url
+        var parts = token.split('.');
+        if (parts.length !== 3) return null;
+
+        // Convertir base64url → base64 standard → décoder
+        var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        // Padding si nécessaire
+        while (base64.length % 4 !== 0) { base64 += '='; }
+
+        var jsonStr = atob(base64);
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        return null;
+    }
+}
+
+function isJwtExpired(payload) {
+    if (!payload || !payload.exp) return true;
+    // exp est un timestamp Unix en secondes
+    return Math.floor(Date.now() / 1000) >= payload.exp;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// MISE À JOUR DE LA NAVBAR (uniquement si pas de session Symfony)
+//
+// Cas : l'user s'est connecté via Passkey → JWT dans localStorage
+//       mais pas de session Symfony → app.user est null → Twig
+//       a rendu "Connexion / S'inscrire".
+//
+// On lit le JWT localement (ZÉRO appel réseau) pour extraire
+// le nom d'utilisateur et réécrire la navbar en JS.
+// ─────────────────────────────────────────────────────────────────
+{% if not app.user %}
+(function updateNavbarFromJwt() {
+    var token = localStorage.getItem('jwt_token');
+
+    // Pas de token → non connecté, rien à faire
+    if (!token) return;
+
+    var payload = parseJwtPayload(token);
+
+    // Token illisible ou expiré → nettoyer localStorage et sortir
+    if (!payload || isJwtExpired(payload)) {
+        localStorage.removeItem('jwt_token');
+        localStorage.removeItem('refresh_token');
+        return;
+    }
+
+    // Lire le vrai nom d'utilisateur stocké par auth.js lors de la connexion.
+    // On NE lit PAS payload.username car LexikJWT y stocke l'email par défaut.
+    var username = localStorage.getItem('display_name')
+                   || payload.email
+                   || payload.sub
+                   || 'Utilisateur';
+    var name = escapeHtml(username);
+
+    // 1. Navbar desktop
+    var navArea = document.getElementById('nav-user-area');
+    if (navArea) {
+        navArea.innerHTML =
+            '<span style="color:#6b7280;font-size:0.9rem;font-weight:500;">'
+            + '<i class="bi bi-person-circle me-1"></i>' + name
+            + '</span>'
+            + '<button onclick="logoutJwt()" class="nav-link-eventix" '
+            + 'style="border:none;background:none;cursor:pointer;">Déconnexion</button>';
+    }
+
+    // 2. Menu mobile
+    var mobileLogin    = document.getElementById('mobile-link-login');
+    var mobileRegister = document.getElementById('mobile-link-register');
+    if (mobileLogin) {
+        mobileLogin.outerHTML =
+            '<span style="color:#6b7280;font-size:0.9rem;font-weight:600;">'
+            + '<i class="bi bi-person-circle me-1"></i>' + name
+            + '</span>'
+            + '<button onclick="logoutJwt()" class="nav-link-eventix" '
+            + 'style="border:none;background:none;cursor:pointer;text-align:left;">Déconnexion</button>';
+    }
+    if (mobileRegister) mobileRegister.remove();
+
+    // 3. Footer
+    var footerLogin    = document.getElementById('footer-link-login');
+    var footerRegister = document.getElementById('footer-link-register');
+    if (footerLogin) {
+        footerLogin.outerHTML =
+            '<button onclick="logoutJwt()" style="background:none;border:none;'
+            + 'color:rgba(255,255,255,0.6);font-size:0.88rem;'
+            + 'cursor:pointer;text-align:left;padding:0;">Déconnexion</button>';
+    }
+    if (footerRegister) footerRegister.remove();
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+})();
+{% endif %}
+
+// ── Synchronisation JWT pour connexion par formulaire ─────────────
+// L'user s'est connecté via formulaire → session Symfony active.
+// On génère un JWT pour les futurs appels API et on le stocke.
+{% if app.user %}
+(function syncJwtWithSession() {
+    if (localStorage.getItem('jwt_token')) return; // Déjà présent
+    fetch('/auth/jwt-for-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin'
+    })
+    .then(function(res) { return res.ok ? res.json() : null; })
+    .then(function(data) {
+        if (data && data.token) {
+            localStorage.setItem('jwt_token', data.token);
+            if (data.refresh_token) {
+                localStorage.setItem('refresh_token', data.refresh_token);
+            }
+        }
+    })
+    .catch(function() {});
+})();
+{% endif %}
+</script>
+
+{% block javascripts %}{% endblock %}
+</body>
+</html>

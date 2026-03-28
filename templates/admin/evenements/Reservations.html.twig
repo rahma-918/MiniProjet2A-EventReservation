@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réservations — {{ event.title }}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+
+    <aside class="admin-sidebar">
+        <div style="padding:1.5rem;">
+            <div style="color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:0.2rem;">Eventix</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:0.78rem;">Administration</div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,0.1);margin:0.5rem 0 1rem;">
+        <nav>
+            <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link active">
+                <i class="bi bi-grid"></i> Tableau de bord
+            </a>
+            <a href="{{ path('app_admin_event_new') }}" class="admin-nav-link">
+                <i class="bi bi-plus-circle"></i> Nouvel événement
+            </a>
+            <a href="{{ path('app_events') }}" class="admin-nav-link" target="_blank">
+                <i class="bi bi-eye"></i> Voir le site
+            </a>
+        </nav>
+        <div style="position:absolute;bottom:1.5rem;left:0;right:0;padding:0 0.5rem;">
+            <a href="{{ path('app_logout') }}" class="admin-nav-link">
+                <i class="bi bi-box-arrow-left"></i> Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <main class="admin-content" style="flex:1;background:#f8f8fc;">
+        <a href="{{ path('app_admin_dashboard') }}" style="color:#6b7280;text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1.5rem;">
+            <i class="bi bi-arrow-left"></i> Retour au dashboard
+        </a>
+        <div style="margin-bottom:2rem;">
+            <h1 style="font-size:1.6rem;font-weight:800;color:#1a1a2e;margin-bottom:0.3rem;">{{ event.title }}</h1>
+            <p style="color:#6b7280;font-size:0.9rem;">
+                <i class="bi bi-calendar3 me-1"></i>{{ event.date|date('d M Y à H:i') }}
+                &nbsp;·&nbsp;
+                <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                &nbsp;·&nbsp;
+                <strong style="color:#3b28cc;">{{ reservations|length }}</strong> réservation(s)
+            </p>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(59,40,204,0.07);overflow:hidden;">
+            {% if reservations|length == 0 %}
+            <div style="padding:3rem;text-align:center;color:#6b7280;">
+                <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:1rem;color:#d1d5db;"></i>
+                Aucune réservation pour cet événement.
+            </div>
+            {% else %}
+            <div style="padding:1.25rem 1.5rem;border-bottom:1px solid #f0f0f8;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:700;font-size:1rem;">{{ reservations|length }} réservation(s)</span>
+                <span style="font-size:0.85rem;color:#6b7280;">{{ event.availableSeats }} places restantes</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f9f9ff;">
+                            <th style="padding:0.9rem 1.5rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">#</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Nom</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Email</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Téléphone</th>
+                            <th style="padding:0.9rem 1.5rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Date réservation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i, res in reservations %}
+                        <tr style="border-top:1px solid #f0f0f8;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:1rem 1.5rem;color:#9ca3af;font-size:0.87rem;">{{ i + 1 }}</td>
+                            <td style="padding:1rem;font-weight:600;font-size:0.92rem;color:#1a1a2e;">{{ res.name }}</td>
+                            <td style="padding:1rem;color:#4b5563;font-size:0.87rem;">{{ res.email }}</td>
+                            <td style="padding:1rem;color:#6b7280;font-size:0.87rem;">{{ res.phone ?? '—' }}</td>
+                            <td style="padding:1rem 1.5rem;color:#6b7280;font-size:0.87rem;">{{ res.createdAt|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }} — Eventix Admin{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+
+    <aside class="admin-sidebar">
+        <div style="padding:1.5rem;">
+            <div style="color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:0.2rem;">Eventix</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:0.78rem;">Administration</div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,0.1);margin:0.5rem 0 1rem;">
+        <nav>
+            <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link">
+                <i class="bi bi-grid"></i> Tableau de bord
+            </a>
+            <a href="{{ path('app_admin_event_new') }}" class="admin-nav-link active">
+                <i class="bi bi-plus-circle"></i> Nouvel événement
+            </a>
+            <a href="{{ path('app_events') }}" class="admin-nav-link" target="_blank">
+                <i class="bi bi-eye"></i> Voir le site
+            </a>
+        </nav>
+        <div style="position:absolute;bottom:1.5rem;left:0;right:0;padding:0 0.5rem;">
+            <a href="{{ path('app_logout') }}" class="admin-nav-link">
+                <i class="bi bi-box-arrow-left"></i> Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <main class="admin-content" style="flex:1;background:#f8f8fc;">
+        <div style="max-width:700px;">
+            <a href="{{ path('app_admin_dashboard') }}" style="color:#6b7280;text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1.5rem;">
+                <i class="bi bi-arrow-left"></i> Retour au dashboard
+            </a>
+            <h1 style="font-size:1.8rem;font-weight:800;color:#1a1a2e;margin-bottom:1.5rem;">{{ title }}</h1>
+
+            <div style="background:#fff;border-radius:16px;padding:2rem;box-shadow:0 4px 24px rgba(59,40,204,0.07);">
+
+                {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+
+                <div class="mb-3">
+                    <label class="form-label">Titre de l'événement <span style="color:red">*</span></label>
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description <span style="color:red">*</span></label>
+                    {{ form_widget(form.description) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date et heure <span style="color:red">*</span></label>
+                        {{ form_widget(form.date) }}
+                        {{ form_errors(form.date) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre de places <span style="color:red">*</span></label>
+                        {{ form_widget(form.seats) }}
+                        {{ form_errors(form.seats) }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Lieu <span style="color:red">*</span></label>
+                    {{ form_widget(form.location) }}
+                    {{ form_errors(form.location) }}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">URL de l'image</label>
+                    {{ form_widget(form.image) }}
+                    {{ form_errors(form.image) }}
+                    <div style="font-size:0.82rem;color:#9ca3af;margin-top:0.25rem;">
+                        Entrez une URL d'image (ex: https://images.unsplash.com/...)
+                    </div>
+                    {% if event is defined and event.image %}
+                    <div style="margin-top:0.75rem;">
+                        <img src="{{ event.image }}" style="height:80px;border-radius:8px;object-fit:cover;" alt="Aperçu">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <button type="submit" class="btn-primary-eventix" style="border:none;">
+                        <i class="bi bi-check2 me-2"></i>
+                        {{ event is defined ? "Modifier l'événement" : "Créer l'événement" }}
+                    </button>
+                    <a href="{{ path('app_admin_dashboard') }}" class="btn-outline-eventix">Annuler</a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

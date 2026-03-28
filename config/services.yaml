@@ -1,0 +1,19 @@
+parameters:
+    app.webauthn.rp_id:   '%env(APP_DOMAIN)%'
+    app.webauthn.rp_name: '%env(WEBAUTHN_RP_NAME)%'
+    app.webauthn.origin:  '%env(APP_ORIGIN)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+
+    # Configuration explicite de PasskeyAuthService avec les paramètres WebAuthn
+    App\Service\PasskeyAuthService:
+        arguments:
+            $rpId:   '%app.webauthn.rp_id%'
+            $rpName: '%app.webauthn.rp_name%'
+            $origin: '%app.webauthn.origin%'

@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin — Eventix{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+
+    {# Sidebar #}
+    <aside class="admin-sidebar">
+        <div style="padding:1.5rem;">
+            <div style="color:#fff;font-weight:800;font-size:1.2rem;margin-bottom:0.2rem;">Eventix</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:0.78rem;">Administration</div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,0.1);margin:0.5rem 0 1rem;">
+        <nav>
+            <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+                <i class="bi bi-grid"></i> Tableau de bord
+            </a>
+            <a href="{{ path('app_admin_event_new') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_event_new' ? 'active' : '' }}">
+                <i class="bi bi-plus-circle"></i> Nouvel événement
+            </a>
+            <a href="{{ path('app_events') }}" class="admin-nav-link" target="_blank">
+                <i class="bi bi-eye"></i> Voir le site
+            </a>
+        </nav>
+        <hr style="border-color:rgba(255,255,255,0.1);margin:1rem 0;">
+        <div style="padding:0 1.5rem;">
+            <div style="color:rgba(255,255,255,0.5);font-size:0.78rem;margin-bottom:0.4rem;">Connecté en tant que</div>
+            <div style="color:#fff;font-weight:600;font-size:0.9rem;">{{ app.user.username }}</div>
+        </div>
+        <div style="position:absolute;bottom:1.5rem;left:0;right:0;padding:0 0.5rem;">
+            <a href="{{ path('app_logout') }}" class="admin-nav-link">
+                <i class="bi bi-box-arrow-left"></i> Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    {# Contenu principal #}
+    <main class="admin-content" style="flex:1;background:#f8f8fc;">
+        <div style="margin-bottom:2rem;">
+            <h1 style="font-size:1.8rem;font-weight:800;color:#1a1a2e;margin-bottom:0.3rem;">Tableau de bord</h1>
+            <p style="color:#6b7280;font-size:0.9rem;">Gérez vos événements et réservations</p>
+        </div>
+
+        {# Stats #}
+        <div class="row g-4 mb-4">
+            <div class="col-sm-6 col-lg-3">
+                <div class="admin-stat-card">
+                    <div style="color:#6b7280;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem;">Événements</div>
+                    <div style="font-size:2.2rem;font-weight:800;color:#1a1a2e;line-height:1;">{{ totalEvents }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="admin-stat-card" style="border-left-color:#00b4d8;">
+                    <div style="color:#6b7280;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem;">Réservations</div>
+                    <div style="font-size:2.2rem;font-weight:800;color:#1a1a2e;line-height:1;">{{ totalReservations }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="admin-stat-card" style="border-left-color:#10b981;">
+                    <div style="color:#6b7280;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem;">À venir</div>
+                    <div style="font-size:2.2rem;font-weight:800;color:#1a1a2e;line-height:1;">
+                        {{ events|filter(e => e.date > date())|length }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="admin-stat-card" style="border-left-color:#f59e0b;">
+                    <div style="color:#6b7280;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem;">Places totales</div>
+                    <div style="font-size:2.2rem;font-weight:800;color:#1a1a2e;line-height:1;">
+                        {% set total = 0 %}{% for e in events %}{% set total = total + e.seats %}{% endfor %}{{ total }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Table événements #}
+        <div style="background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(59,40,204,0.07);overflow:hidden;">
+            <div style="padding:1.5rem;border-bottom:1px solid #f0f0f8;display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="font-size:1.1rem;font-weight:700;margin:0;">Tous les événements</h2>
+                <a href="{{ path('app_admin_event_new') }}" class="btn-primary-eventix" style="padding:0.5rem 1.2rem;font-size:0.85rem;">
+                    <i class="bi bi-plus me-1"></i>Nouveau
+                </a>
+            </div>
+
+            {% if events|length == 0 %}
+            <div style="padding:3rem;text-align:center;color:#6b7280;">
+                <i class="bi bi-calendar-x" style="font-size:2.5rem;display:block;margin-bottom:1rem;color:#d1d5db;"></i>
+                Aucun événement. <a href="{{ path('app_admin_event_new') }}" style="color:#3b28cc;">Créer le premier →</a>
+            </div>
+            {% else %}
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f9f9ff;">
+                            <th style="padding:0.9rem 1.5rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Titre</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Date</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Lieu</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Places</th>
+                            <th style="padding:0.9rem 1rem;text-align:left;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Réservations</th>
+                            <th style="padding:0.9rem 1.5rem;text-align:right;font-size:0.78rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr style="border-top:1px solid #f0f0f8;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:1rem 1.5rem;font-weight:600;font-size:0.92rem;color:#1a1a2e;">{{ event.title }}</td>
+                            <td style="padding:1rem;color:#6b7280;font-size:0.87rem;">{{ event.date|date('d M Y') }}</td>
+                            <td style="padding:1rem;color:#6b7280;font-size:0.87rem;">{{ event.location|slice(0,20) }}{% if event.location|length > 20 %}...{% endif %}</td>
+                            <td style="padding:1rem;">
+                                <span style="font-size:0.85rem;font-weight:600;color:#3b28cc;">{{ event.availableSeats }}/{{ event.seats }}</span>
+                            </td>
+                            <td style="padding:1rem;">
+                                <a href="{{ path('app_admin_event_reservations', {id: event.id}) }}"
+                                   style="background:rgba(59,40,204,0.08);color:#3b28cc;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.82rem;font-weight:600;text-decoration:none;">
+                                    {{ event.reservations|length }} rés.
+                                </a>
+                            </td>
+                            <td style="padding:1rem 1.5rem;text-align:right;">
+                                <div style="display:inline-flex;gap:0.5rem;align-items:center;">
+                                    <a href="{{ path('app_admin_event_edit', {id: event.id}) }}"
+                                       style="width:34px;height:34px;background:#f0f0f8;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#3b28cc;text-decoration:none;"
+                                       title="Modifier">
+                                        <i class="bi bi-pencil" style="font-size:0.9rem;"></i>
+                                    </a>
+                                    <form method="post" action="{{ path('app_admin_event_delete', {id: event.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer cet événement ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete'~event.id) }}">
+                                        <button type="submit"
+                                                style="width:34px;height:34px;background:#ffebee;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#c62828;border:none;cursor:pointer;"
+                                                title="Supprimer">
+                                            <i class="bi bi-trash" style="font-size:0.9rem;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+{% endblock %}
